@@ -1,12 +1,11 @@
-import os
-
 # main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from typing import List
+import os
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -16,7 +15,7 @@ app = FastAPI(
 )
 
 # Database Configuration
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost/namesdb")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/namesdb")
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -31,15 +30,18 @@ class NameEntry(Base):
 # Create tables
 Base.metadata.create_all(bind=engine)
 
-# Pydantic Model for Request/Response
+# Pydantic Models
 class NameSchema(BaseModel):
     name: str
 
 class NameResponse(BaseModel):
     id: int
     name: str
+    
+    class Config:
+        orm_mode = True
 
-# Database Session Dependency
+# Database Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -49,7 +51,7 @@ def get_db():
 
 # API Routes
 @app.post("/names/", response_model=NameResponse, tags=["names"])
-def create_name(name_entry: NameSchema, db: SessionLocal = next(get_db())):
+async def create_name(name_entry: NameSchema, db: Session = Depends(get_db)):
     """
     Create a new name entry in the database
     """
@@ -60,14 +62,14 @@ def create_name(name_entry: NameSchema, db: SessionLocal = next(get_db())):
     return db_name
 
 @app.get("/names/", response_model=List[NameResponse], tags=["names"])
-def get_names(db: SessionLocal = next(get_db())):
+async def get_names(db: Session = Depends(get_db)):
     """
     Retrieve all names from the database
     """
     return db.query(NameEntry).all()
 
 @app.get("/names/{name_id}", response_model=NameResponse, tags=["names"])
-def get_name(name_id: int, db: SessionLocal = next(get_db())):
+async def get_name(name_id: int, db: Session = Depends(get_db)):
     """
     Retrieve a specific name by ID
     """

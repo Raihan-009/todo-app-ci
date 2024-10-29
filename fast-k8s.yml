@@ -96,8 +96,7 @@ spec:
     spec:
       containers:
         - name: fastapi-app
-          image: fastapi-names:latest
-          imagePullPolicy: Never  # For local images
+          image: poridhi/fast-backend:v1.0
           ports:
             - containerPort: 8000
           env:
@@ -128,4 +127,4 @@ spec:
   ports:
     - port: 80
       targetPort: 8000
-  type: LoadBalancer
+  type: NodePort

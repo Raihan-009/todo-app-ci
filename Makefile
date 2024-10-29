@@ -2,7 +2,7 @@
 DOCKERHUB_USERNAME:=poridhi
 tag:=v1.3
 ftag:=v1.4
-t:=v1.0
+t:=v1.1
 
 fe:
 	@ docker build -t $(DOCKERHUB_USERNAME)/todo-frontend:${ftag} ./frontend
