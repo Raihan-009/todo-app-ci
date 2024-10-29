@@ -1,6 +1,6 @@
 # Makefile
 DOCKERHUB_USERNAME:=poridhi
-tag:=v1.1
+tag:=v1.2
 
 fe:
 	@ docker build -t $(DOCKERHUB_USERNAME)/todo-frontend:${tag} ./frontend

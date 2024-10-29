@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-dockerhub-username/todo-frontend:latest
+        image: poridhi/todo-frontend:v1.2
         env:
         - name: REACT_APP_API_URL
           value: "http://backend-service:5000"

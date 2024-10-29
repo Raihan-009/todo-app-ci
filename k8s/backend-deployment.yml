@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: your-dockerhub-username/todo-backend:latest
+        image: poridhi/todo-backend:v1.2
         env:
         - name: DB_HOST
           value: "postgres-service"

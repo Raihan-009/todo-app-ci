@@ -14,16 +14,22 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: your-dockerhub-username/todo-postgres:latest
+        image: poridhi/todo-postgres:v1.2
         env:
+        - name: POSTGRES_DB
+          value: "todos"
         - name: POSTGRES_USER
           value: "postgres"
         - name: POSTGRES_PASSWORD
           value: "postgres"
-        - name: POSTGRES_DB
-          value: "todos"
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-data
+        emptyDir: {}
 
 ---
 apiVersion: v1
