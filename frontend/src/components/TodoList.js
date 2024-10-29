@@ -6,7 +6,9 @@ const TodoList = () => {
   const [error, setError] = useState(null);
   
   // Use internal K8s service name for backend
-  const backendUrl = 'http://backend-service:5000';
+  const backendUrl = 'http://backend-service.default.svc.cluster.local:5000';
+  
+  console.log('Backend URL:', backendUrl); // Add this for debugging
 
   useEffect(() => {
     fetchTodos();
