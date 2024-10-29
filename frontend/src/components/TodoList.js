@@ -3,37 +3,72 @@ import React, { useState, useEffect } from 'react';
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const [error, setError] = useState(null);
+  
+  // Use internal K8s service name for backend
+  const backendUrl = 'http://backend-service:5000';
 
   useEffect(() => {
     fetchTodos();
   }, []);
 
   const fetchTodos = async () => {
-    const response = await fetch(`${API_URL}/todos`);
-    const data = await response.json();
-    setTodos(data);
+    try {
+      console.log('Fetching todos from:', backendUrl);
+      const response = await fetch(`${backendUrl}/todos`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Received todos:', data);
+      setTodos(data);
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+      setError('Failed to fetch todos');
+    }
   };
 
   const addTodo = async (e) => {
     e.preventDefault();
-    await fetch(`${API_URL}/todos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: newTodo })
-    });
-    setNewTodo('');
-    fetchTodos();
+    try {
+      const response = await fetch(`${backendUrl}/todos`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: newTodo })
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTodos([...todos, data]);
+      setNewTodo('');
+    } catch (error) {
+      console.error('Error adding todo:', error);
+      setError('Failed to add todo');
+    }
   };
 
   const deleteTodo = async (id) => {
-    await fetch(`${API_URL}/todos/${id}`, { method: 'DELETE' });
-    fetchTodos();
+    try {
+      const response = await fetch(`${backendUrl}/todos/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setTodos(todos.filter(todo => todo.id !== id));
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+      setError('Failed to delete todo');
+    }
   };
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Todo List</h1>
+      {error && <div className="text-red-500 mb-4">{error}</div>}
       <form onSubmit={addTodo} className="mb-4">
         <input
           type="text"

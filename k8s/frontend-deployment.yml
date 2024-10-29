@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: poridhi/todo-frontend:v1.2
+        image: poridhi/todo-frontend:v1.3
         env:
         - name: REACT_APP_API_URL
-          value: "http://backend-service:5000"
+          value: "http://backend-service:30001"
         ports:
         - containerPort: 3000

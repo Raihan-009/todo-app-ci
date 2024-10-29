@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: poridhi/todo-postgres:v1.2
+        image: poridhi/todo-postgres:v1.3
         env:
         - name: POSTGRES_DB
           value: "todos"
@@ -37,8 +37,9 @@ kind: Service
 metadata:
   name: postgres-service
 spec:
+  type: ClusterIP
   selector:
     app: postgres
   ports:
-  - port: 5432
-    targetPort: 5432
+    - port: 5432
+      targetPort: 5432
