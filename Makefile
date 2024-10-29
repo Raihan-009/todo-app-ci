@@ -2,6 +2,7 @@
 DOCKERHUB_USERNAME:=poridhi
 tag:=v1.3
 ftag:=v1.4
+t:=v1.0
 
 fe:
 	@ docker build -t $(DOCKERHUB_USERNAME)/todo-frontend:${ftag} ./frontend
@@ -29,3 +30,7 @@ clean:
 
 pods:
 	@ kubectl get pods
+
+fast:
+	@ docker build -t $(DOCKERHUB_USERNAME)/fast-backend:${t} ./fast-api
+	@ @ docker push $(DOCKERHUB_USERNAME)/fast-backend:${t}

@@ -19,4 +19,4 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build and push images
-      run: make docker-push
+      run: make fast
